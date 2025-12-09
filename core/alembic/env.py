@@ -9,6 +9,9 @@ from alembic import context
 
 from core.config import settings
 from core.db_config import BaseModel
+from core.models import (
+    LeadModel, ContactModel, SourceModel, OperatorModel, SourceOperatorDistributionModel
+)
 
 
 config = context.config
