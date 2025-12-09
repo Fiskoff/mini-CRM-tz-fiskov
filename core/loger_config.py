@@ -2,7 +2,7 @@ import logging
 
 
 class LogerConfig:
-    loger_level = logging.WARNING
+    loger_level = logging.INFO
 
     def setup_logging(self):
         log_format_str = "[%(asctime)s.%(msecs)03d] %(module)20s:%(lineno)-4d %(levelname)8s - %(message)s"
