@@ -15,8 +15,8 @@ class OperatorModel(BaseModel):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     max_load: Mapped[int] = mapped_column(Integer, default=10)
 
-    distribution_rules = relationship("SourceOperatorDistribution", back_populates="operator", cascade="all, delete-orphan")
-    contacts = relationship("Contact", back_populates="assigned_operator", cascade="all, delete-orphan")
+    distribution_rules = relationship("SourceOperatorDistributionModel", back_populates="operator", cascade="all, delete-orphan")
+    contacts = relationship("ContactModel", back_populates="assigned_operator", cascade="all, delete-orphan")
 
 
 class SourceModel(BaseModel):
@@ -24,8 +24,8 @@ class SourceModel(BaseModel):
 
     name: Mapped[str] = mapped_column(String(256), unique=True, index=True)
 
-    distribution_rules = relationship("SourceOperatorDistribution", back_populates="source", cascade="all, delete-orphan")
-    contacts = relationship("Contact", back_populates="source", cascade="all, delete-orphan")
+    distribution_rules = relationship("SourceOperatorDistributionModel", back_populates="source", cascade="all, delete-orphan")
+    contacts = relationship("ContactModel", back_populates="source", cascade="all, delete-orphan")
 
 
 class SourceOperatorDistributionModel(BaseModel):
@@ -35,8 +35,8 @@ class SourceOperatorDistributionModel(BaseModel):
     operator_id: Mapped[int] = mapped_column(Integer, ForeignKey("operators.id"))
     weight: Mapped[decimal.Decimal] = mapped_column(Numeric(precision=5, scale=2), default=1.0)
 
-    source = relationship("Source", back_populates="distribution_rules")
-    operator = relationship("Operator", back_populates="distribution_rules")
+    source = relationship("SourceModel", back_populates="distribution_rules")
+    operator = relationship("OperatorModel", back_populates="distribution_rules")
 
 
 class LeadModel(BaseModel):
@@ -48,7 +48,7 @@ class LeadModel(BaseModel):
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
-    contacts = relationship("Contact", back_populates="lead", cascade="all, delete-orphan")
+    contacts = relationship("ContactModel", back_populates="lead", cascade="all, delete-orphan")
 
 
 class ContactModel(BaseModel):
@@ -61,6 +61,7 @@ class ContactModel(BaseModel):
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    lead = relationship("Lead", back_populates="contacts")
-    source = relationship("Source", back_populates="contacts")
-    assigned_operator = relationship("Operator", back_populates="contacts")
+    lead = relationship("LeadModel", back_populates="contacts")
+    source = relationship("SourceModel", back_populates="contacts")
+    assigned_operator = relationship("OperatorModel", back_populates="contacts")
+
