@@ -1,3 +1,6 @@
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -26,6 +29,14 @@ class DatabaseHelper:
             expire_on_commit=False
         )
 
+    @asynccontextmanager
+    async def get_async_session(self) -> AsyncGenerator[AsyncSession, None]:
+        async with self.session_factory() as session:
+            try:
+                yield session
+            finally:
+                await session.close()
+
 
 class BaseModel(DeclarativeBase):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -37,3 +48,5 @@ db_helper = DatabaseHelper(
     settings.db.pool_size,
     settings.db.max_overflow,
 )
+
+get_async_db_session = db_helper.get_async_session
