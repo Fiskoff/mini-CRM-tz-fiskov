@@ -4,13 +4,17 @@ from fastapi import FastAPI
 from uvicorn import run
 
 from core.config import settings
+from app.api import routers
 
 
 settings.log.setup_logging()
 logger = logging.getLogger(__name__)
 
 def create_application() -> FastAPI:
-    app = FastAPI(title="Title API", version="1.0.0", docs_url="/docs", redoc_url="/redoc")
+    app = FastAPI(title="Mini CRM API", version="1.0.0", docs_url="/docs", redoc_url="/redoc")
+
+    for router in routers.routers:
+        app.include_router(router)
 
     return app
 
