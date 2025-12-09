@@ -15,8 +15,8 @@ class OperatorModel(BaseModel):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     max_load: Mapped[int] = mapped_column(Integer, default=10)
 
-    distribution_rules = relationship("SourceOperatorDistribution", back_populates="operator")
-    contacts = relationship("Contact", back_populates="assigned_operator")
+    distribution_rules = relationship("SourceOperatorDistribution", back_populates="operator", cascade="all, delete-orphan")
+    contacts = relationship("Contact", back_populates="assigned_operator", cascade="all, delete-orphan")
 
 
 class SourceModel(BaseModel):
@@ -24,8 +24,8 @@ class SourceModel(BaseModel):
 
     name: Mapped[str] = mapped_column(String(256), unique=True, index=True)
 
-    distribution_rules = relationship("SourceOperatorDistribution", back_populates="source")
-    contacts = relationship("Contact", back_populates="source")
+    distribution_rules = relationship("SourceOperatorDistribution", back_populates="source", cascade="all, delete-orphan")
+    contacts = relationship("Contact", back_populates="source", cascade="all, delete-orphan")
 
 
 class SourceOperatorDistributionModel(BaseModel):
@@ -48,7 +48,7 @@ class LeadModel(BaseModel):
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
-    contacts = relationship("Contact", back_populates="lead")
+    contacts = relationship("Contact", back_populates="lead", cascade="all, delete-orphan")
 
 
 class ContactModel(BaseModel):
